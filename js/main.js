@@ -1,4 +1,6 @@
-function init() {
+let app;
+
+function setup() {
     const app = new PIXI.Application({
         width: 800,
         height: 600,
@@ -6,6 +8,19 @@ function init() {
     });
 
     document.body.appendChild(app.view);
+
+    return app;
+}
+
+function resize(event) {
+    app.width = window.innerWidth;
+    app.height = window.innerHeight;
+}
+
+function init() {
+    app = setup();
+
+    window.addEventListener('resize', resize);
 
     const logo_texture = PIXI.Texture.from('img/logo.png');
 
