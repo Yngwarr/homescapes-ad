@@ -21,31 +21,39 @@ function init() {
 
     const logo_texture = PIXI.Texture.from('img/logo.png');
     const background_texture = PIXI.Texture.from('img/background.png');
+    const austin_texture = PIXI.Texture.from('img/austin.png');
+    const decor_info = [
+        PIXI.Texture.from('img/decor/plant_1.png'),
+        PIXI.Texture.from('img/decor/plant_2.png'),
+        PIXI.Texture.from('img/decor/bookshelf.png'),
+        PIXI.Texture.from('img/decor/sofa.png'),
+        PIXI.Texture.from('img/decor/globe.png'),
+        PIXI.Texture.from('img/decor/table.png')
+    ];
 
     const logo = new PIXI.Sprite(logo_texture);
-    logo.anchor.set(.5);
+    logo.position.x = 10;
+    logo.position.y = -100;
 
     const background = new PIXI.Sprite(background_texture);
     background.anchor.set(.5);
 
-    app.stage.addChild(background, logo);
+    const austin = new PIXI.Sprite(austin_texture);
 
-    layout.add(background).pin(.5, .5).fit(true);
-    layout.add(logo).pin(.5, .3);
+    for (const t of decor_info) {
+    }
 
-    logo.scale.x = 0;
+    app.stage.addChild(background, austin, logo);
+
+    layout.add(background).pin(.45, .5);
+    layout.add(austin).pin(.5, .15);
+
     tweening.add(new Tween(
-        1,
-        () => logo.scale.x,
-        x => logo.scale.x = x,
-        1000,
-        backout(10),
+        10,
+        () => logo.position.y,
+        y => logo.position.y = y,
+        500,
+        backout(1),
         () => console.log('yay!')
     ));
-
-    //let acc = 0;
-    //app.ticker.add(delta => {
-        //acc += delta / 2 * Math.PI;
-        //logo.scale.x = Math.cos(acc / 100);
-    //});
 }
