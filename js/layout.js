@@ -25,6 +25,10 @@ class LayoutItem {
         this._fit = value;
         return this;
     }
+
+    ratio() {
+        return this.sprite.texture.orig.width / this.sprite.texture.orig.height;
+    }
 }
 
 class Layout {
@@ -44,22 +48,7 @@ class Layout {
     updateAll() {
         for (const item of this.items) {
             this._pin(item);
-
-            if (item._fit) {
-                const sprite = item.sprite;
-                const ratio = sprite.width / sprite.height;
-                const screenWidth = this.app.screen.width;
-                const screenHeight = this.app.screen.height;
-                const screenRatio = screenWidth / screenHeight;
-
-                if (screenRatio > item._ratio) {
-                    sprite.height = screenHeight;
-                    sprite.width = screenHeight * ratio;
-                } else {
-                    sprite.width = screenWidth;
-                    sprite.height = screenWidth / ratio;
-                }
-            }
+            this._fit(item);
         }
     }
 
@@ -71,5 +60,23 @@ class Layout {
 
         item.sprite.x = this.app.screen.width * pinX + offX;
         item.sprite.y = this.app.screen.height * pinY + offY;
+    }
+
+    _fit(item) {
+        if (!item._fit) return;
+
+        const sprite = item.sprite;
+        const ratio = item.ratio();
+        const screenWidth = this.app.screen.width;
+        const screenHeight = this.app.screen.height;
+        const screenRatio = screenWidth / screenHeight;
+
+        if (screenRatio < ratio) {
+            sprite.height = screenHeight;
+            sprite.width = screenHeight * ratio;
+        } else {
+            sprite.width = screenWidth;
+            sprite.height = screenWidth / ratio;
+        }
     }
 }

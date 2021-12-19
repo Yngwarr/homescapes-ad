@@ -31,6 +31,4 @@ function init() {
     layout.add(logo).pin(0, 0).offset(10, 10);
 
     layout.updateAll();
-
-    app.loader.onComplete.add(() => layout.updateAll());
 }
