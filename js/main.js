@@ -1,33 +1,28 @@
 let app;
+let layout;
 
 function setup() {
     const app = new PIXI.Application({
-        width: 800,
-        height: 600,
         resizeTo: window,
+        autoDensity: true,
         resolution: window.devicePixelRatio || 1
     });
 
     document.body.appendChild(app.view);
 
-    window.addEventListener('resize', resize);
-
     return app;
-}
-
-function resize(event) {
-    console.log("hey!");
 }
 
 function init() {
     app = setup();
+    layout = new Layout(app);
 
     const logo_texture = PIXI.Texture.from('img/logo.png');
 
     const logo = new PIXI.Sprite(logo_texture);
-    logo.anchor.set(.5);
+    logo.anchor.set(0);
     app.stage.addChild(logo);
 
-    logo.x = app.screen.width / 2;
-    logo.y = app.screen.height / 2;
+    layout.add(logo).pin(0, 0).offset(10, 10);
+    layout.updateAll();
 }
