@@ -29,6 +29,4 @@ function init() {
 
     layout.add(background).pin(.5, .5).fit(true);
     layout.add(logo).pin(0, 0).offset(10, 10);
-
-    layout.updateAll();
 }

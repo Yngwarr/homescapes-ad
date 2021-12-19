@@ -35,8 +35,10 @@ class Layout {
     constructor(app) {
         this.app = app;
         this.items = [];
+        this.dirty = true;
 
-        window.addEventListener('resize', () => this.updateAll());
+        window.addEventListener('resize', () => this.dirty = true);
+        app.ticker.add(_delta => this.updateAll());
     }
 
     add(sprite) {
@@ -46,6 +48,10 @@ class Layout {
     }
 
     updateAll() {
+        if (!this.dirty) return;
+
+        this.dirty = false;
+
         for (const item of this.items) {
             this._pin(item);
             this._fit(item);
@@ -64,6 +70,10 @@ class Layout {
 
     _fit(item) {
         if (!item._fit) return;
+        if (!item.sprite.texture.valid) {
+            this.dirty = true;
+            return;
+        }
 
         const sprite = item.sprite;
         const ratio = item.ratio();
