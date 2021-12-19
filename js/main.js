@@ -4,23 +4,23 @@ function setup() {
     const app = new PIXI.Application({
         width: 800,
         height: 600,
+        resizeTo: window,
         resolution: window.devicePixelRatio || 1
     });
 
     document.body.appendChild(app.view);
 
+    window.addEventListener('resize', resize);
+
     return app;
 }
 
 function resize(event) {
-    app.width = window.innerWidth;
-    app.height = window.innerHeight;
+    console.log("hey!");
 }
 
 function init() {
     app = setup();
-
-    window.addEventListener('resize', resize);
 
     const logo_texture = PIXI.Texture.from('img/logo.png');
 

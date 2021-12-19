@@ -12,6 +12,7 @@ html {
 
 body {
 	background: #fff;
+	overflow: hidden;
 }
 
 body * {
