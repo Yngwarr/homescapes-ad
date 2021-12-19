@@ -18,11 +18,19 @@ function init() {
     layout = new Layout(app);
 
     const logo_texture = PIXI.Texture.from('img/logo.png');
+    const background_texture = PIXI.Texture.from('img/background.png');
 
     const logo = new PIXI.Sprite(logo_texture);
-    logo.anchor.set(0);
-    app.stage.addChild(logo);
+    const background = new PIXI.Sprite(background_texture);
 
+    background.anchor.set(.5);
+
+    app.stage.addChild(background, logo);
+
+    layout.add(background).pin(.5, .5).fit(true);
     layout.add(logo).pin(0, 0).offset(10, 10);
+
     layout.updateAll();
+
+    app.loader.onComplete.add(() => layout.updateAll());
 }
