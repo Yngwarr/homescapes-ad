@@ -1,5 +1,6 @@
 let app;
 let tweening;
+let stair;
 
 function setup() {
     const app = new PIXI.Application({
@@ -47,9 +48,14 @@ function init() {
         anchor: [0, 1],
         position: [100, center[1] - 75]
     }];
+    stair = new Stair(PIXI.Texture.from('img/stair/old.png'), [
+        PIXI.Texture.from('img/stair/new1.png'),
+        PIXI.Texture.from('img/stair/new2.png'),
+        PIXI.Texture.from('img/stair/new3.png')
+    ], [0, 1], [center[0] + 140, app.screen.height - 90], tweening);
 
     const logo = new PIXI.Sprite(logo_texture);
-    logo.position.set(10, -200);
+    logo.position.set(10, 10);
 
     const background = new PIXI.Sprite(background_texture);
     background.anchor.set(.5);
@@ -71,13 +77,14 @@ function init() {
 
     app.stage.addChild(background, austin, logo);
     app.stage.addChild(...decor);
+    stair.addToContainer(app.stage);
 
     tweening.add(new Tween(
-        10,
         () => logo.position.y,
         y => logo.position.y = y,
+        -200,
         1000,
         backout(1),
-        () => console.log('yay!')
+        { onComplete: () => console.log('yay!'), from: true }
     ));
 }

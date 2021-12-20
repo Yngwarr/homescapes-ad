@@ -22,27 +22,38 @@ class Tweening {
             throw ValueError('tween must be an instance of Tween');
         }
         this.tweens.push(tween);
+        tween.start();
     }
 }
 
 class Tween {
-    constructor(to, getter, setter, duration, easing, onComplete = null) {
-        this.to = to;
+    constructor(getter, setter, to, duration, easing, { onComplete = null, from = false }) {
         this.getter = getter;
         this.setter = setter;
+        this.to = from ? this.getter() : to;
         this.duration = duration;
         this.easing = easing;
         this.onComplete = onComplete;
 
-        this.from = this.getter();
-        this.start = Date.now();
+        this.from = from ? to : this.getter();
+        this.startTime = null;
         this.complete = false;
     }
 
-    tick(now) {
-        if (now < this.start) return;
+    start() {
+        this.complete = false;
+        this.startTime = Date.now();
+    }
 
-        const phase = Math.min(1, (now - this.start) / this.duration);
+    setProperty(getter, setter) {
+        this.getter = getter;
+        this.setter = setter;
+    }
+
+    tick(now) {
+        if (now === null || now < this.startTime) return;
+
+        const phase = Math.min(1, (now - this.startTime) / this.duration);
         this.setter(lerp(this.from, this.to, this.easing(phase)));
 
         if (phase === 1) {
@@ -59,4 +70,8 @@ function lerp(a, b, t) {
 
 function backout(amount) {
     return (t) => (--t * t * ((amount + 1) * t + amount) + 1);
+}
+
+function easeOutQuad(x) {
+    return 1 - (1 - x) * (1 - x);
 }
