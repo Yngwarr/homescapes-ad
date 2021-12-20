@@ -76,7 +76,7 @@ function init() {
         10,
         () => logo.position.y,
         y => logo.position.y = y,
-        500,
+        1000,
         backout(1),
         () => console.log('yay!')
     ));

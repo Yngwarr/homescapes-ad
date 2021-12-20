@@ -10,6 +10,7 @@ class Tweening {
         for (let i = this.tweens.length - 1; i >= 0; --i) {
             const tween = this.tweens[i];
             tween.tick(now);
+
             if (tween.complete) {
                 this.tweens.splice(i, 1);
             }
@@ -39,6 +40,8 @@ class Tween {
     }
 
     tick(now) {
+        if (now < this.start) return;
+
         const phase = Math.min(1, (now - this.start) / this.duration);
         this.setter(lerp(this.from, this.to, this.easing(phase)));
 
