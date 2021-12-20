@@ -26,8 +26,9 @@ function init() {
     const background_texture = PIXI.Texture.from('img/background.png');
     const austin_texture = PIXI.Texture.from('img/austin.png');
     const front_plant_texture = PIXI.Texture.from('img/decor/front_plant.png');
+    const plant_texture = PIXI.Texture.from('img/decor/plant.png');
     const decor_info = [{
-        texture: PIXI.Texture.from('img/decor/plant_1.png'),
+        texture: plant_texture,
         position: [center[0] - 250, -25]
     }, {
         texture: PIXI.Texture.from('img/decor/table.png'),
@@ -41,7 +42,7 @@ function init() {
         texture: PIXI.Texture.from('img/decor/bookshelf.png'),
         position: [center[0] + 160, -40]
     }, {
-        texture: PIXI.Texture.from('img/decor/plant_2.png'),
+        texture: plant_texture,
         anchor: [.5, .5],
         position: [app.screen.width - 150, center[1] - 150]
     }, {
