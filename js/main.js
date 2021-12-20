@@ -25,6 +25,7 @@ function init() {
     const logo_texture = PIXI.Texture.from('img/logo.png');
     const background_texture = PIXI.Texture.from('img/background.png');
     const austin_texture = PIXI.Texture.from('img/austin.png');
+    const front_plant_texture = PIXI.Texture.from('img/decor/front_plant.png');
     const decor_info = [{
         texture: PIXI.Texture.from('img/decor/plant_1.png'),
         position: [center[0] - 250, -25]
@@ -64,6 +65,10 @@ function init() {
     const austin = new PIXI.Sprite(austin_texture);
     austin.position.set(center[0], 135);
 
+    const frontPlant = new PIXI.Sprite(front_plant_texture);
+    frontPlant.anchor.set(0, 1);
+    frontPlant.position.set(app.screen.width - 300, app.screen.height - 100);
+
     const decor = [];
     for (const d of decor_info) {
         const sprite = new PIXI.Sprite(d.texture);
@@ -75,9 +80,9 @@ function init() {
         sprite.position.set(...d.position);
     }
 
-    app.stage.addChild(background, austin, logo);
-    app.stage.addChild(...decor);
+    app.stage.addChild(background, austin, logo, ...decor);
     stair.addToContainer(app.stage);
+    app.stage.addChild(frontPlant);
 
     tweening.add(new Tween(
         () => logo.position.y,
