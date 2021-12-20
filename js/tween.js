@@ -27,7 +27,9 @@ class Tweening {
 }
 
 class Tween {
-    constructor(getter, setter, to, duration, easing, { onComplete = null, from = false }) {
+    constructor(getter, setter, to, duration, easing, opts = {}) {
+        const { onComplete = null, from = false } = opts;
+
         this.getter = getter;
         this.setter = setter;
         this.to = from ? this.getter() : to;
@@ -60,6 +62,41 @@ class Tween {
             this.onComplete?.();
             this.complete = true;
             return;
+        }
+    }
+}
+
+class Sequence {
+    constructor(stages, tweening) {
+        this._stages = stages;
+        this._tweening = tweening;
+        this._current = -1;
+        this._tweensLive = 0;
+    }
+
+    start() {
+        this._current = -1;
+        this._tweensLive = 0;
+        this.next();
+    }
+
+    next() {
+        ++this._current;
+
+        if (this._current >= this._stages.length) return;
+
+        const stage = this._stages[this._current];
+        this._tweensLive = stage.length;
+        for (const tween of stage) {
+            tween.onComplete = () => this.onStageComplete()
+            this._tweening.add(tween);
+        }
+    }
+
+    onStageComplete() {
+        --this._tweensLive;
+        if (this._tweensLive <= 0) {
+            this.next();
         }
     }
 }

@@ -57,7 +57,7 @@ function init() {
     ], [0, 1], [center[0] + 140, app.screen.height - 90], tweening);
 
     const logo = new PIXI.Sprite(logo_texture);
-    logo.position.set(10, 10);
+    logo.position.set(10, -200);
 
     const background = new PIXI.Sprite(background_texture);
     background.anchor.set(.5);
@@ -68,7 +68,7 @@ function init() {
 
     const frontPlant = new PIXI.Sprite(front_plant_texture);
     frontPlant.anchor.set(0, 1);
-    frontPlant.position.set(app.screen.width - 300, app.screen.height - 100);
+    frontPlant.position.set(app.screen.width - 300, app.screen.height + 500);
 
     const decor = [];
     for (const d of decor_info) {
@@ -85,12 +85,12 @@ function init() {
     stair.addToContainer(app.stage);
     app.stage.addChild(frontPlant);
 
-    tweening.add(new Tween(
-        () => logo.position.y,
-        y => logo.position.y = y,
-        -200,
-        1000,
-        backout(1),
-        { onComplete: () => console.log('yay!'), from: true }
-    ));
+    const decor_stage = decor.map(d => new Tween(() => d.position.y, y => d.position.y = y, -500, 1000, easeOutQuad, {from: true}));
+    decor_stage.push(new Tween(() => frontPlant.position.y, y => frontPlant.position.y = y, app.screen.height - 100, 500, easeOutQuad));
+    const seq = new Sequence([
+        decor_stage,
+        [new Tween(() => logo.position.y, y => logo.position.y = y, 10, 500, backout(1))]
+    ], tweening);
+
+    seq.start();
 }
