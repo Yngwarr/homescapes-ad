@@ -206,10 +206,17 @@ function init() {
             new Tween(() => logo.position.y, y => logo.position.y = y, 10, 500, backout(1)),
             new Tween(() => hammer.scale.x, x => hammer.scale.x = x, 1, 500, backout(1)),
             new Tween(() => hammer.scale.y, y => hammer.scale.y = y, 1, 500, backout(1)),
-            new Tween(() => continueButton.scale.x, x => continueButton.scale.x = x, 1, 500, backout(1)),
-            new Tween(() => continueButton.scale.y, y => continueButton.scale.y = y, 1, 500, backout(1))
+            new Tween(() => continueButton.scale.x, x => continueButton.scale.x = x, 1, 500, easeOutQuad),
+            new Tween(() => continueButton.scale.y, y => continueButton.scale.y = y, 1, 500, easeOutQuad)
         ]
-    ], tweening);
+    ], tweening, () => {
+        const tx = new Tween(() => continueButton.scale.x, x => continueButton.scale.x = x, 1.1, 1000, easeInOutSine, {loop: true});
+        const ty = new Tween(() => continueButton.scale.y, y => continueButton.scale.y = y, 1.1, 1000, easeInOutSine, {loop: true});
+        const thammer = new Tween(() => hammer.position.y, y => hammer.position.y = y, hammer.position.y - 10, 1000, easeInOutSine, {loop: true});
+        tweening.add(tx);
+        tweening.add(ty);
+        tweening.add(thammer);
+    });
 
     seq.start();
 }

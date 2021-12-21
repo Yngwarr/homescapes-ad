@@ -28,7 +28,7 @@ class Tweening {
 
 class Tween {
     constructor(getter, setter, to, duration, easing, opts = {}) {
-        const { onComplete = null, from = false } = opts;
+        const { onComplete = null, from = false, loop = false } = opts;
 
         this.getter = getter;
         this.setter = setter;
@@ -36,6 +36,7 @@ class Tween {
         this.duration = duration;
         this.easing = easing;
         this.onComplete = onComplete;
+        this.loop = loop;
 
         this.from = from ? to : this.getter();
         this.startTime = null;
@@ -58,20 +59,28 @@ class Tween {
         const phase = Math.min(1, (now - this.startTime) / this.duration);
         this.setter(lerp(this.from, this.to, this.easing(phase)));
 
-        if (phase === 1) {
-            this.onComplete?.();
-            this.complete = true;
+        if (phase !== 1) return;
+
+        if (this.loop) {
+            const from = this.from;
+            this.from = this.to;
+            this.to = from;
+            this.start();
             return;
         }
+
+        this.onComplete?.();
+        this.complete = true;
     }
 }
 
 class Sequence {
-    constructor(stages, tweening) {
+    constructor(stages, tweening, onComplete = null) {
         this._stages = stages;
         this._tweening = tweening;
         this._current = -1;
         this._tweensLive = 0;
+        this._onComplete = onComplete;
     }
 
     start() {
@@ -83,11 +92,18 @@ class Sequence {
     next() {
         ++this._current;
 
-        if (this._current >= this._stages.length) return;
+        if (this._current >= this._stages.length) {
+            this._onComplete?.();
+            return;
+        }
 
         const stage = this._stages[this._current];
         this._tweensLive = stage.length;
         for (const tween of stage) {
+            if (tween.loop) {
+                console.warn('the sequence contains a looping tween, skipping it');
+                continue;
+            }
             tween.onComplete = () => this.onStageComplete()
             this._tweening.add(tween);
         }
@@ -115,4 +131,8 @@ function backout(amount) {
 
 function easeOutQuad(x) {
     return 1 - (1 - x) * (1 - x);
+}
+
+function easeInOutSine(x) {
+    return -(Math.cos(Math.PI * x) - 1) / 2;
 }
