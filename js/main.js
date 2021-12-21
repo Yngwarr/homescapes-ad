@@ -16,57 +16,74 @@ function setup() {
     return app;
 }
 
+function loadTextures() {
+    return {
+        logo: PIXI.Texture.from('img/logo.png'),
+        back: PIXI.Texture.from('img/background.png'),
+        austin: PIXI.Texture.from('img/austin.png'),
+        front_plant: PIXI.Texture.from('img/decor/front_plant.png'),
+        plant: PIXI.Texture.from('img/decor/plant.png'),
+        table: PIXI.Texture.from('img/decor/table.png'),
+        sofa: PIXI.Texture.from('img/decor/sofa.png'),
+        bookshelf: PIXI.Texture.from('img/decor/bookshelf.png'),
+        globe: PIXI.Texture.from('img/decor/globe.png'),
+        old_stair: PIXI.Texture.from('img/stair/old.png'),
+        new_stairs: [
+            PIXI.Texture.from('img/stair/new1.png'),
+            PIXI.Texture.from('img/stair/new2.png'),
+            PIXI.Texture.from('img/stair/new3.png')
+        ],
+    };
+}
+
 function init() {
     app = setup();
     tweening = new Tweening(app.ticker);
 
     const center = [app.screen.width / 2, app.screen.height / 2];
+    const textures = loadTextures();
 
-    const logo_texture = PIXI.Texture.from('img/logo.png');
-    const background_texture = PIXI.Texture.from('img/background.png');
-    const austin_texture = PIXI.Texture.from('img/austin.png');
-    const front_plant_texture = PIXI.Texture.from('img/decor/front_plant.png');
-    const plant_texture = PIXI.Texture.from('img/decor/plant.png');
     const decor_info = [{
-        texture: plant_texture,
+        texture: textures.plant,
         position: [center[0] - 250, -25]
     }, {
-        texture: PIXI.Texture.from('img/decor/table.png'),
+        texture: textures.table,
         anchor: [.5, .5],
         position: [center[0] - 325, center[1] - 50]
     }, {
-        texture: PIXI.Texture.from('img/decor/sofa.png'),
+        texture: textures.sofa,
         anchor: [0, 1],
         position: [150, app.screen.height - 100]
     }, {
-        texture: PIXI.Texture.from('img/decor/bookshelf.png'),
+        texture: textures.bookshelf,
         position: [center[0] + 160, -40]
     }, {
-        texture: plant_texture,
+        texture: textures.plant,
         anchor: [.5, .5],
         position: [app.screen.width - 150, center[1] - 150]
     }, {
-        texture: PIXI.Texture.from('img/decor/globe.png'),
+        texture: textures.globe,
         anchor: [0, 1],
         position: [100, center[1] - 75]
     }];
-    stair = new Stair(PIXI.Texture.from('img/stair/old.png'), [
-        PIXI.Texture.from('img/stair/new1.png'),
-        PIXI.Texture.from('img/stair/new2.png'),
-        PIXI.Texture.from('img/stair/new3.png')
-    ], [0, 1], [center[0] + 140, app.screen.height - 90], tweening);
+    stair = new Stair(
+        textures.old_stair,
+        textures.new_stairs,
+        [0, 1],
+        [center[0] + 140, app.screen.height - 90],
+        tweening);
 
-    const logo = new PIXI.Sprite(logo_texture);
+    const logo = new PIXI.Sprite(textures.logo);
     logo.position.set(10, -200);
 
-    const background = new PIXI.Sprite(background_texture);
+    const background = new PIXI.Sprite(textures.back);
     background.anchor.set(.5);
     background.position.set(...center);
 
-    const austin = new PIXI.Sprite(austin_texture);
+    const austin = new PIXI.Sprite(textures.austin);
     austin.position.set(center[0], 135);
 
-    const frontPlant = new PIXI.Sprite(front_plant_texture);
+    const frontPlant = new PIXI.Sprite(textures.front_plant);
     frontPlant.anchor.set(0, 1);
     frontPlant.position.set(app.screen.width - 300, app.screen.height + 500);
 
