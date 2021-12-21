@@ -1,6 +1,5 @@
 let app;
 let tweening;
-let stair;
 
 function setup() {
     const app = new PIXI.Application({
@@ -42,8 +41,27 @@ function loadTextures() {
             PIXI.Texture.from('img/choice/choice1.png'),
             PIXI.Texture.from('img/choice/choice2.png'),
             PIXI.Texture.from('img/choice/choice3.png')
-        ]
+        ],
+        end: PIXI.Texture.from('img/end.png')
     };
+}
+
+function setupFinScreen(texture, x, y) {
+    const shade = new PIXI.Graphics();
+    shade.beginFill(0x0);
+    shade.drawRect(0, 0, app.screen.width, app.screen.height);
+    shade.endFill();
+    shade.alpha = .6;
+
+    const endScreen = new PIXI.Sprite(texture);
+    endScreen.anchor.set(.5);
+    endScreen.position.set(x, y);
+
+    const fin = new PIXI.Container();
+    fin.alpha = 0;
+    fin.addChild(shade, endScreen);
+
+    return fin;
 }
 
 function init() {
@@ -76,7 +94,8 @@ function init() {
         anchor: [0, 1],
         position: [100, center[1] - 75]
     }];
-    stair = new Stair(
+
+    const stair = new Stair(
         textures.old_stair,
         textures.new_stairs,
         [0, 1],
@@ -101,6 +120,8 @@ function init() {
     okButton.anchor.set(.5, 0);
     okButton.interactive = false;
     okButton.alpha = 0;
+
+    const fin = setupFinScreen(textures.end, center[0], center[1] - 75);
 
     const okMoveTween = new Tween(() => okButton.position.x, x => okButton.position.x = x, 0, 250, backout(1));
     const okAlphaTween = new Tween(() => okButton.alpha, a => okButton.alpha = a, 1, 250, easeOutQuad);
@@ -140,6 +161,7 @@ function init() {
         choice.setActive(true, tweening);
     });
 
+    const finAppearTween = new Tween(() => fin.alpha, a => fin.alpha = a, 1, 750, easeOutQuad);
     okButton.on('pointerdown', () => {
         okButton.interactive = false;
 
@@ -150,6 +172,8 @@ function init() {
         fadeOut.start();
 
         choice.setActive(false, tweening);
+
+        setTimeout(() => tweening.add(finAppearTween), 1500);
     });
 
     const continueButton = new PIXI.Sprite(textures.continue_button);
@@ -168,11 +192,11 @@ function init() {
         sprite.position.set(...d.position);
     }
 
-    app.stage.addChild(background, austin, logo, ...decor);
+    app.stage.addChild(background, austin, ...decor);
     stair.addToContainer(app.stage);
     app.stage.addChild(frontPlant);
     choice.addToContainer(app.stage);
-    app.stage.addChild(okButton, hammer, continueButton);
+    app.stage.addChild(okButton, hammer, fin, logo, continueButton);
 
     const decor_stage = decor.map(d => new Tween(() => d.position.y, y => d.position.y = y, -500, 1000, easeOutQuad, {from: true}));
     decor_stage.push(new Tween(() => frontPlant.position.y, y => frontPlant.position.y = y, app.screen.height - 100, 500, easeOutQuad));
