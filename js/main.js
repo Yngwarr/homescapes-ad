@@ -33,7 +33,8 @@ function loadTextures() {
             PIXI.Texture.from('img/stair/new2.png'),
             PIXI.Texture.from('img/stair/new3.png')
         ],
-        hammer: PIXI.Texture.from('img/hammer.png')
+        hammer: PIXI.Texture.from('img/hammer.png'),
+        continue_button: PIXI.Texture.from('img/continue.png'),
     };
 }
 
@@ -93,6 +94,11 @@ function init() {
     hammer.scale.set(0);
     hammer.position.set(app.screen.width - 230, center[1] + 25);
 
+    const continueButton = new PIXI.Sprite(textures.continue_button);
+    continueButton.anchor.set(.5);
+    continueButton.scale.set(0);
+    continueButton.position.set(center[0], app.screen.height - 100);
+
     const decor = [];
     for (const d of decor_info) {
         const sprite = new PIXI.Sprite(d.texture);
@@ -106,7 +112,7 @@ function init() {
 
     app.stage.addChild(background, austin, logo, ...decor);
     stair.addToContainer(app.stage);
-    app.stage.addChild(frontPlant, hammer);
+    app.stage.addChild(frontPlant, hammer, continueButton);
 
     const decor_stage = decor.map(d => new Tween(() => d.position.y, y => d.position.y = y, -500, 1000, easeOutQuad, {from: true}));
     decor_stage.push(new Tween(() => frontPlant.position.y, y => frontPlant.position.y = y, app.screen.height - 100, 500, easeOutQuad));
@@ -115,7 +121,9 @@ function init() {
         [
             new Tween(() => logo.position.y, y => logo.position.y = y, 10, 500, backout(1)),
             new Tween(() => hammer.scale.x, x => hammer.scale.x = x, 1, 500, backout(1)),
-            new Tween(() => hammer.scale.y, y => hammer.scale.y = y, 1, 500, backout(1))
+            new Tween(() => hammer.scale.y, y => hammer.scale.y = y, 1, 500, backout(1)),
+            new Tween(() => continueButton.scale.x, x => continueButton.scale.x = x, 1, 500, backout(1)),
+            new Tween(() => continueButton.scale.y, y => continueButton.scale.y = y, 1, 500, backout(1))
         ]
     ], tweening);
 
