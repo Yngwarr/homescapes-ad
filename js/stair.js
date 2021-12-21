@@ -41,7 +41,7 @@ class Stair {
     }
 
     addToContainer(container) {
-        container.addChild(this.old, ...(this.new));
+        container.addChild(this.old, ...this.new);
     }
 
     changeState(stateNum) {
