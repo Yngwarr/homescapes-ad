@@ -105,6 +105,10 @@ function lerp(a, b, t) {
     return a * (1 - t) + b * t;
 }
 
+function backin(amount) {
+    return (t) => t * t * ((amount + 1) * t - amount);
+}
+
 function backout(amount) {
     return (t) => (--t * t * ((amount + 1) * t + amount) + 1);
 }

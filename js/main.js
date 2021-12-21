@@ -93,6 +93,15 @@ function init() {
     hammer.anchor.set(.5, 1);
     hammer.scale.set(0);
     hammer.position.set(app.screen.width - 230, center[1] + 25);
+    hammer.interactive = true;
+    hammer.on('pointerdown', () => {
+        const seq = new Sequence([[
+            new Tween(() => hammer.scale.x, x => hammer.scale.x = x, 0, 250, backin(1)),
+            new Tween(() => hammer.scale.y, y => hammer.scale.y = y, 0, 250, backin(1))
+        ]], tweening);
+        hammer.interactive = false;
+        seq.start();
+    });
 
     const continueButton = new PIXI.Sprite(textures.continue_button);
     continueButton.anchor.set(.5);
