@@ -22,15 +22,15 @@ class Stair {
             () => this._active.alpha,
             value => this._active.alpha = value,
             1,
-            1000,
+            500,
             easeOutQuad,
             { start: false }
         );
         this.posTween = new Tween(
             () => this._active.position.y,
             value => this._active.position.y = value,
-            y - 200,
-            1000,
+            y - 50,
+            500,
             easeOutQuad,
             { start: false, from: true }
         );

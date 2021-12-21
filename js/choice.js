@@ -1,11 +1,18 @@
 class Choice {
     constructor(x, y, textures, bg, bgChosen, onChange) {
         this._onChange = onChange;
+        this._x = x;
+        this._y = y;
+
         this._buttons = [];
         for (let i = 0; i < textures.length; ++i) {
-            const b = new ChoiceButton(x + i * 135, y, textures[i], bg, bgChosen, () => this.choose(i));
+            const b = new ChoiceButton(this.buttonPos(i), textures[i], bg, bgChosen, () => this.choose(i));
             this._buttons.push(b);
         }
+    }
+
+    buttonPos(index) {
+        return [this._x + index * 135, this._y];
     }
 
     choose(choice) {
@@ -29,7 +36,7 @@ class Choice {
 }
 
 class ChoiceButton {
-    constructor(x, y, texture, background, backgroundChosen, onClick) {
+    constructor([x, y], texture, background, backgroundChosen, onClick) {
         this.container = new PIXI.Container();
         this.container.alpha = 0;
         this.container.on('pointerdown', () => this._onClick());
@@ -64,6 +71,7 @@ class ChoiceButton {
 
     setActive(on, tweening) {
         this.container.interactive = on;
+        this._appearTween.from = on ? 0 : 1;
         this._appearTween.to = on ? 1 : 0;
         tweening.add(this._appearTween);
     }

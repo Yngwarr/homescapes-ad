@@ -35,6 +35,7 @@ function loadTextures() {
         ],
         hammer: PIXI.Texture.from('img/hammer.png'),
         continue_button: PIXI.Texture.from('img/continue.png'),
+        ok_button: PIXI.Texture.from('img/ok.png'),
         choice_off: PIXI.Texture.from('img/choice/off.png'),
         choice_on: PIXI.Texture.from('img/choice/on.png'),
         choice: [
@@ -96,12 +97,31 @@ function init() {
     frontPlant.anchor.set(0, 1);
     frontPlant.position.set(app.screen.width - 300, app.screen.height + 500);
 
+    const okButton = new PIXI.Sprite(textures.ok_button);
+    okButton.anchor.set(.5, 0);
+    okButton.interactive = false;
+    okButton.alpha = 0;
+
+    const okMoveTween = new Tween(() => okButton.position.x, x => okButton.position.x = x, 0, 250, backout(1));
+    const okAlphaTween = new Tween(() => okButton.alpha, a => okButton.alpha = a, 1, 250, easeOutQuad);
     const choice = new Choice(
         center[0] + 200, 75,
         textures.choice,
         textures.choice_off,
         textures.choice_on,
-        i => stair.changeState(i));
+        i => {
+            const [x, y] = choice.buttonPos(i);
+            stair.changeState(i);
+            if (okButton.interactive === false) {
+                okButton.interactive = true;
+                okButton.position.set(x, y + 50);
+                tweening.add(okAlphaTween);
+            } else {
+                okMoveTween.from = okButton.position.x;
+                okMoveTween.to = x;
+                tweening.add(okMoveTween);
+            }
+        });
 
     const hammer = new PIXI.Sprite(textures.hammer);
     hammer.anchor.set(.5, 1);
@@ -118,6 +138,18 @@ function init() {
         fadeOut.start();
 
         choice.setActive(true, tweening);
+    });
+
+    okButton.on('pointerdown', () => {
+        okButton.interactive = false;
+
+        const fadeOut = new Sequence([[
+            new Tween(() => okButton.scale.x, x => okButton.scale.x = x, 0, 250, backin(1)),
+            new Tween(() => okButton.scale.y, y => okButton.scale.y = y, 0, 250, backin(1))
+        ]], tweening);
+        fadeOut.start();
+
+        choice.setActive(false, tweening);
     });
 
     const continueButton = new PIXI.Sprite(textures.continue_button);
@@ -138,8 +170,9 @@ function init() {
 
     app.stage.addChild(background, austin, logo, ...decor);
     stair.addToContainer(app.stage);
-    app.stage.addChild(frontPlant, hammer, continueButton);
+    app.stage.addChild(frontPlant);
     choice.addToContainer(app.stage);
+    app.stage.addChild(okButton, hammer, continueButton);
 
     const decor_stage = decor.map(d => new Tween(() => d.position.y, y => d.position.y = y, -500, 1000, easeOutQuad, {from: true}));
     decor_stage.push(new Tween(() => frontPlant.position.y, y => frontPlant.position.y = y, app.screen.height - 100, 500, easeOutQuad));
