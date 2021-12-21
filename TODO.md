@@ -1,9 +1,5 @@
 ## Essentials
 
+* Make `Tween` interface less horrendously-looking.
+* Refactor the mess `init` became.
 * Run animations after texture loading completes.
-* Remove `stair` from the global scope.
-
-## Nice to have
-
-* Change `Tween({from: true/false})` to `Tween.To()` and `Tween.From()`.
-* Extract functions from `init()`.
