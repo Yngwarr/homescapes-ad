@@ -18,6 +18,7 @@ class Stair {
         this._y = y;
 
         this._tweening = tweening;
+        // can't use Tween.Opacity 'cause I want to bind this and have _active changed 
         this.opacityTween = new Tween(
             () => this._active.alpha,
             value => this._active.alpha = value,

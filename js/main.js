@@ -123,8 +123,8 @@ function init() {
 
     const fin = setupFinScreen(textures.end, center[0], center[1] - 75);
 
-    const okMoveTween = new Tween(() => okButton.position.x, x => okButton.position.x = x, 0, 250, backout(1));
-    const okAlphaTween = new Tween(() => okButton.alpha, a => okButton.alpha = a, 1, 250, easeOutQuad);
+    const okMoveTween = Tween.MoveHorizontal(okButton, 0, 250, backout(1));
+    const okAlphaTween = Tween.Opacity(okButton, 1, 250, easeOutQuad);
     const choice = new Choice(
         center[0] + 200, 75,
         textures.choice,
@@ -152,23 +152,21 @@ function init() {
     hammer.on('pointerdown', () => {
         hammer.interactive = false;
 
-        const fadeOut = new Sequence([[
-            new Tween(() => hammer.scale.x, x => hammer.scale.x = x, 0, 250, backin(1)),
-            new Tween(() => hammer.scale.y, y => hammer.scale.y = y, 0, 250, backin(1))
-        ]], tweening);
+        const fadeOut = new Sequence([
+            Tween.Scale(hammer, [0, 0], 250, backin(1))
+        ], tweening);
         fadeOut.start();
 
         choice.setActive(true, tweening);
     });
 
-    const finAppearTween = new Tween(() => fin.alpha, a => fin.alpha = a, 1, 750, easeOutQuad);
+    const finAppearTween = Tween.Opacity(fin, 1, 750, easeOutQuad);
     okButton.on('pointerdown', () => {
         okButton.interactive = false;
 
-        const fadeOut = new Sequence([[
-            new Tween(() => okButton.scale.x, x => okButton.scale.x = x, 0, 250, backin(1)),
-            new Tween(() => okButton.scale.y, y => okButton.scale.y = y, 0, 250, backin(1))
-        ]], tweening);
+        const fadeOut = new Sequence([
+            Tween.Scale(okButton, [0, 0], 250, backin(1))
+        ], tweening);
         fadeOut.start();
 
         choice.setActive(false, tweening);
@@ -198,24 +196,21 @@ function init() {
     choice.addToContainer(app.stage);
     app.stage.addChild(okButton, hammer, fin, logo, continueButton);
 
-    const decor_stage = decor.map(d => new Tween(() => d.position.y, y => d.position.y = y, -500, 1000, easeOutQuad, {from: true}));
-    decor_stage.push(new Tween(() => frontPlant.position.y, y => frontPlant.position.y = y, app.screen.height - 100, 500, easeOutQuad));
+    const decor_stage = decor.map(d => Tween.MoveVertical(d, -500, 1000, easeOutQuad, {from: true}));
+    decor_stage.push(
+        Tween.MoveVertical(frontPlant, app.screen.height - 100, 500, easeOutQuad)
+    );
     const seq = new Sequence([
-        decor_stage,
-        [
-            new Tween(() => logo.position.y, y => logo.position.y = y, 10, 500, backout(1)),
-            new Tween(() => hammer.scale.x, x => hammer.scale.x = x, 1, 500, backout(1)),
-            new Tween(() => hammer.scale.y, y => hammer.scale.y = y, 1, 500, backout(1)),
-            new Tween(() => continueButton.scale.x, x => continueButton.scale.x = x, 1, 500, easeOutQuad),
-            new Tween(() => continueButton.scale.y, y => continueButton.scale.y = y, 1, 500, easeOutQuad)
+        decor_stage, [
+            Tween.MoveVertical(logo, 10, 500, backout(1)),
+            ...Tween.Scale(hammer, [1, 1], 500, backout(1)),
+            ...Tween.Scale(continueButton, [1, 1], 500, easeOutQuad)
         ]
     ], tweening, () => {
-        const tx = new Tween(() => continueButton.scale.x, x => continueButton.scale.x = x, 1.1, 1000, easeInOutSine, {loop: true});
-        const ty = new Tween(() => continueButton.scale.y, y => continueButton.scale.y = y, 1.1, 1000, easeInOutSine, {loop: true});
-        const thammer = new Tween(() => hammer.position.y, y => hammer.position.y = y, hammer.position.y - 10, 1000, easeInOutSine, {loop: true});
-        tweening.add(tx);
-        tweening.add(ty);
-        tweening.add(thammer);
+        tweening.add(
+            ...Tween.Scale(continueButton, [1.1, 1.1], 1000, easeInOutSine, {loop: true}),
+            Tween.MoveVertical(hammer, hammer.position.y - 10, 1000, easeInOutSine, {loop: true})
+        );
     });
 
     seq.start();

@@ -17,12 +17,14 @@ class Tweening {
         }
     }
 
-    add(tween) {
-        if (!(tween instanceof Tween)) {
-            throw ValueError('tween must be an instance of Tween');
+    add(...tweens) {
+        for (const tween of tweens) {
+            if (!(tween instanceof Tween)) {
+                throw ValueError('tween must be an instance of Tween');
+            }
+            this.tweens.push(tween);
+            tween.start();
         }
-        this.tweens.push(tween);
-        tween.start();
     }
 }
 
@@ -41,6 +43,25 @@ class Tween {
         this.from = from ? to : this.getter();
         this.startTime = null;
         this.complete = false;
+    }
+
+    static MoveHorizontal(element, ...params) {
+        return new Tween(() => element.position.x, x => element.position.x = x, ...params);
+    }
+
+    static MoveVertical(element, ...params) {
+        return new Tween(() => element.position.y, y => element.position.y = y, ...params);
+    }
+
+    static Scale(element, [toX, toY], ...params) {
+        return [
+            new Tween(() => element.scale.x, x => element.scale.x = x, toX, ...params),
+            new Tween(() => element.scale.y, y => element.scale.y = y, toY, ...params)
+        ];
+    }
+
+    static Opacity(element, ...params) {
+        return new Tween(() => element.alpha, a => element.alpha = a, ...params);
     }
 
     start() {
