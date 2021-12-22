@@ -46,6 +46,19 @@ function loadTextures() {
     };
 }
 
+function setupSprite(texture, pos = null, anchor = null) {
+    const sprite = new PIXI.Sprite(texture);
+
+    if (anchor !== null) {
+        sprite.anchor.set(...anchor);
+    }
+    if (pos !== null) {
+        sprite.position.set(...pos);
+    }
+
+    return sprite
+}
+
 function setupFinScreen(texture, x, y) {
     const shade = new PIXI.Graphics();
     shade.beginFill(0x0);
@@ -53,9 +66,7 @@ function setupFinScreen(texture, x, y) {
     shade.endFill();
     shade.alpha = .6;
 
-    const endScreen = new PIXI.Sprite(texture);
-    endScreen.anchor.set(.5);
-    endScreen.position.set(x, y);
+    const endScreen = setupSprite(texture, [x, y], [.5]);
 
     const fin = new PIXI.Container();
     fin.alpha = 0;
@@ -102,22 +113,13 @@ function init() {
         [center[0] + 140, app.screen.height - 90],
         tweening);
 
-    const logo = new PIXI.Sprite(textures.logo);
-    logo.position.set(10, -200);
+    const logo = setupSprite(textures.logo, [10, -200]);
+    const background = setupSprite(textures.back, center, [.5]);
+    const austin = setupSprite(textures.austin, [center[0], 135]);
+    const frontPlant = setupSprite(textures.front_plant,
+        [app.screen.width - 300, app.screen.height + 700], [0, 1]);
 
-    const background = new PIXI.Sprite(textures.back);
-    background.anchor.set(.5);
-    background.position.set(...center);
-
-    const austin = new PIXI.Sprite(textures.austin);
-    austin.position.set(center[0], 135);
-
-    const frontPlant = new PIXI.Sprite(textures.front_plant);
-    frontPlant.anchor.set(0, 1);
-    frontPlant.position.set(app.screen.width - 300, app.screen.height + 500);
-
-    const okButton = new PIXI.Sprite(textures.ok_button);
-    okButton.anchor.set(.5, 0);
+    const okButton = setupSprite(textures.ok_button, null, [.5, 0]);
     okButton.interactive = false;
     okButton.alpha = 0;
 
@@ -125,6 +127,7 @@ function init() {
 
     const okMoveTween = Tween.MoveHorizontal(okButton, 0, 250, backout(1));
     const okAlphaTween = Tween.Opacity(okButton, 1, 250, easeOutQuad);
+
     const choice = new Choice(
         center[0] + 200, 75,
         textures.choice,
@@ -144,10 +147,9 @@ function init() {
             }
         });
 
-    const hammer = new PIXI.Sprite(textures.hammer);
-    hammer.anchor.set(.5, 1);
+    const hammer = setupSprite(textures.hammer,
+        [app.screen.width - 230, center[1] + 25], [.5, 1]);
     hammer.scale.set(0);
-    hammer.position.set(app.screen.width - 230, center[1] + 25);
     hammer.interactive = true;
     hammer.on('pointerdown', () => {
         hammer.interactive = false;
@@ -174,21 +176,11 @@ function init() {
         setTimeout(() => tweening.add(finAppearTween), 1500);
     });
 
-    const continueButton = new PIXI.Sprite(textures.continue_button);
-    continueButton.anchor.set(.5);
+    const continueButton = setupSprite(textures.continue_button,
+        [center[0], app.screen.height - 100], [.5])
     continueButton.scale.set(0);
-    continueButton.position.set(center[0], app.screen.height - 100);
 
-    const decor = [];
-    for (const d of decor_info) {
-        const sprite = new PIXI.Sprite(d.texture);
-        decor.push(sprite);
-
-        if (d.anchor) {
-            sprite.anchor.set(...d.anchor);
-        }
-        sprite.position.set(...d.position);
-    }
+    const decor = decor_info.map(d => setupSprite(d.texture, d.position, d.anchor));
 
     app.stage.addChild(background, austin, ...decor);
     stair.addToContainer(app.stage);
@@ -198,7 +190,7 @@ function init() {
 
     const decor_stage = decor.map(d => Tween.MoveVertical(d, -500, 1000, easeOutQuad, {from: true}));
     decor_stage.push(
-        Tween.MoveVertical(frontPlant, app.screen.height - 100, 500, easeOutQuad)
+        Tween.MoveVertical(frontPlant, app.screen.height - 100, 700, easeOutQuad)
     );
     const seq = new Sequence([
         decor_stage, [
